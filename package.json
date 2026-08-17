@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "homepage": "https://shantanunaik23.github.io/cake",
+  "homepage": "https://shantanunaik23.github.io/Cake",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
