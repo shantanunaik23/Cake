@@ -29,6 +29,25 @@ const tiers = [
 
 const featured = recipes[0]
 
+function NutrientRow({ label, amount, unit, dv, barClass }) {
+  return (
+    <div>
+      <div className="flex items-baseline justify-between font-sans text-sm">
+        <span className="text-ink-600">{label}</span>
+        <span className="text-ink-700">
+          <strong className="font-semibold">{amount}{unit}</strong>
+          {dv != null && <span className="ml-1.5 text-ink-400">· {dv}% DV</span>}
+        </span>
+      </div>
+      {dv != null && (
+        <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-ink-600/10">
+          <div className={`h-full rounded-full ${barClass}`} style={{ width: `${Math.min(100, dv)}%` }} />
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function Landing() {
   return (
     <div>
@@ -136,6 +155,99 @@ export default function Landing() {
               <p className="mt-2 font-sans text-sm leading-relaxed text-ink-500">{s.body}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Recipe example with nutrition */}
+      <section className="mx-auto max-w-6xl px-5 py-20">
+        <div className="max-w-xl">
+          <span className="font-sans text-sm font-bold uppercase tracking-wider text-rust-500">Recipe example</span>
+          <h2 className="mt-3 font-display text-4xl font-semibold text-ink-700">See exactly what's on each plate.</h2>
+          <p className="mt-3 font-sans text-base leading-relaxed text-ink-500">
+            Every recipe comes with real nutrition — for you and for your dog —
+            so "cook once" isn't a guess. Here's Monday's dinner.
+          </p>
+        </div>
+
+        <div className="mt-10 overflow-hidden rounded-3xl border border-ink-600/10 bg-cream-100 shadow-soft">
+          <div
+            className="flex items-center justify-between px-8 py-6 text-cream-50"
+            style={{ background: `linear-gradient(135deg, ${featured.palette[0]}, ${featured.palette[1]})` }}
+          >
+            <div>
+              <div className="font-display text-2xl font-semibold">{featured.name}</div>
+              <div className="mt-1 font-sans text-sm text-cream-50/85">{featured.tagline}</div>
+            </div>
+            <span className="hidden rounded-full bg-cream-50/20 px-3 py-1 font-sans text-xs font-bold sm:block">{featured.day}</span>
+          </div>
+
+          <div className="grid gap-8 p-8 md:grid-cols-2 md:gap-0 md:divide-x md:divide-ink-600/10">
+            {/* Human nutrition */}
+            <div className="md:pr-8">
+              <div className="flex items-baseline justify-between">
+                <div className="font-sans text-xs font-bold uppercase tracking-wider text-rust-500">Your plate</div>
+                <div className="font-sans text-xs text-ink-400">{featured.nutrition.human.perServing}</div>
+              </div>
+              <div className="mt-3 flex items-baseline gap-2">
+                <span className="font-display text-4xl font-semibold text-ink-700">{featured.nutrition.human.calories}</span>
+                <span className="font-sans text-sm text-ink-400">kcal · {featured.nutrition.human.dailyValue.calories}% of a 2,000-cal day</span>
+              </div>
+
+              <div className="mt-5 space-y-3">
+                <NutrientRow label="Protein" amount={featured.nutrition.human.protein} unit="g" dv={featured.nutrition.human.dailyValue.protein} barClass="bg-rust-500" />
+                <NutrientRow label="Carbohydrates" amount={featured.nutrition.human.carbs} unit="g" dv={featured.nutrition.human.dailyValue.carbs} barClass="bg-rust-500" />
+                <NutrientRow label="Fat" amount={featured.nutrition.human.fat} unit="g" dv={featured.nutrition.human.dailyValue.fat} barClass="bg-rust-500" />
+                <NutrientRow label="Fiber" amount={featured.nutrition.human.fiber} unit="g" dv={featured.nutrition.human.dailyValue.fiber} barClass="bg-rust-500" />
+              </div>
+
+              <div className="mt-6 flex flex-wrap gap-2">
+                {featured.benefits.human.map((b) => (
+                  <span key={b} className="rounded-full bg-rust-50 px-3 py-1 font-sans text-xs font-semibold text-rust-500">
+                    {b}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Dog nutrition */}
+            <div className="pt-8 md:pt-0 md:pl-8">
+              <div className="flex items-baseline justify-between">
+                <div className="flex items-center gap-1.5 font-sans text-xs font-bold uppercase tracking-wider text-forest-500">
+                  <PawIcon className="h-3.5 w-3.5" /> Bramble's bowl
+                </div>
+                <div className="font-sans text-xs text-ink-400">{featured.nutrition.dog.perServing}</div>
+              </div>
+              <div className="mt-3 flex items-baseline gap-2">
+                <span className="font-display text-4xl font-semibold text-ink-700">{featured.nutrition.dog.calories}</span>
+                <span className="font-sans text-sm text-ink-400">kcal · {featured.nutrition.dog.dailyValue.calories}% of a 30lb dog's day</span>
+              </div>
+
+              <div className="mt-5 space-y-3">
+                <NutrientRow label="Protein" amount={featured.nutrition.dog.protein} unit="g" dv={featured.nutrition.dog.dailyValue.protein} barClass="bg-forest-500" />
+                <NutrientRow label="Fat" amount={featured.nutrition.dog.fat} unit="g" dv={featured.nutrition.dog.dailyValue.fat} barClass="bg-forest-500" />
+                <NutrientRow label="Fiber" amount={featured.nutrition.dog.fiber} unit="g" dv={null} barClass="bg-forest-500" />
+              </div>
+
+              <div className="mt-6 flex flex-wrap gap-2">
+                {featured.benefits.dog.map((b) => (
+                  <span key={b} className="rounded-full bg-forest-50 px-3 py-1 font-sans text-xs font-semibold text-forest-600">
+                    {b}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4 border-t border-ink-600/10 bg-cream-50 px-8 py-6 sm:flex-row sm:items-center sm:justify-between">
+            <p className="max-w-md font-sans text-xs leading-relaxed text-ink-400">
+              % Daily Value shown against a 2,000-calorie human diet and a ~30lb,
+              moderately active dog, for comparison only — not veterinary or
+              medical advice.
+            </p>
+            <Button to={`/recipe/${featured.id}`} variant="outline" size="sm" className="shrink-0">
+              See the full recipe <ArrowIcon className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </section>
 

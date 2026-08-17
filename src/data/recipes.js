@@ -33,6 +33,29 @@ export const recipes = [
     },
     safetyNote:
       'The dog portion is pulled aside before any seasoning touches the tray — no garlic powder, onion, added salt, or oil. Chicken, carrot, potato, and green bean are all vet-approved staples in moderation.',
+    nutrition: {
+      human: {
+        perServing: '1 plate (~450g)',
+        calories: 620,
+        protein: 42,
+        carbs: 48,
+        fat: 24,
+        fiber: 7,
+        dailyValue: { calories: 31, protein: 84, carbs: 17, fat: 31, fiber: 25 },
+      },
+      dog: {
+        perServing: '1 bowl (~150g)',
+        calories: 210,
+        protein: 24,
+        fat: 9,
+        fiber: 2,
+        dailyValue: { calories: 30, protein: 55, fat: 24 },
+      },
+    },
+    benefits: {
+      human: ['Muscle-building protein', 'Gut-friendly fiber', 'Heart-healthy fats', 'Post-workout recovery'],
+      dog: ['Teeth & gum health', 'Joint support', 'Gentle on digestion', 'Lean muscle maintenance'],
+    },
     shoppingList: [
       'Chicken thighs, boneless skinless — 900g',
       'Carrots — 3 medium',
