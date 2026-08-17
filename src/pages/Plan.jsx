@@ -16,11 +16,11 @@ export default function Plan() {
         <div>
           <span className="font-sans text-sm font-bold uppercase tracking-wider text-rust-500">This week's plan</span>
           <h1 className="mt-2 font-display text-4xl font-semibold text-ink-700">
-            {data.completed ? `${dogName}'s week, sorted.` : 'A sample two-bowl week'}
+            {data.completed ? `Your week, sorted — ${dogName} eats alongside you.` : 'A sample week of shared dinners'}
           </h1>
           <p className="mt-2 max-w-lg font-sans text-ink-500">
             {data.completed
-              ? `Built around ${data.owner.dietaryPrefs.join(', ').toLowerCase() || 'your tastes'} and about ${dailyGrams}g/day for ${dogName}.`
+              ? `Built around ${data.owner.dietaryPrefs.join(', ').toLowerCase() || 'your tastes'}, with a safe portion sized for ${dogName} — about ${dailyGrams}g/day.`
               : 'Fill out onboarding for a plan personalized to you and your dog — here\'s what one looks like.'}
           </p>
         </div>

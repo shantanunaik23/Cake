@@ -1,6 +1,6 @@
 # Two Bowls
 
-A subscription meal-plan demo for households cooking for a person and a dog at the same time — "cook once, feed you both."
+A subscription meal-plan demo built around a simple idea: your dinner comes first, and a dog-safe portion of it is shared with your dog — "cook your dinner, share it with them."
 
 See [BRAND.md](./BRAND.md) for naming rationale and the visual system.
 

@@ -98,10 +98,10 @@ export default function Onboarding() {
           <PawIcon className="h-12 w-12 animate-wag text-cream-50" />
         </div>
         <h2 className="mt-8 font-display text-3xl font-semibold text-ink-700">
-          Pairing your meals with {data.dog.name || 'their'} bowl…
+          Setting a place for {data.dog.name || 'them'} at your table…
         </h2>
         <p className="mt-3 font-sans text-ink-500">
-          Matching recipes to {data.owner.dietaryPrefs.join(', ').toLowerCase() || 'your'} tastes and a{' '}
+          Building your week around {data.owner.dietaryPrefs.join(', ').toLowerCase() || 'your'} tastes, with a safe portion for a{' '}
           {data.dog.activityLevel || 'balanced'}-energy pup.
         </p>
         <div className="mt-8 h-2 w-64 overflow-hidden rounded-full bg-ink-600/10">
@@ -185,7 +185,7 @@ export default function Onboarding() {
 
         {step === 3 && (
           <div>
-            <h1 className="font-display text-3xl font-semibold text-ink-700">Now, the important one — your dog.</h1>
+            <h1 className="font-display text-3xl font-semibold text-ink-700">Now, who's joining you at the table?</h1>
             <p className="mt-2 font-sans text-ink-500">What's their name, and which look suits them best?</p>
             <input
               value={data.dog.name}
@@ -278,11 +278,11 @@ export default function Onboarding() {
               <PawIcon className="h-9 w-9" />
             </div>
             <h1 className="mt-6 font-display text-3xl font-semibold text-ink-700">
-              Ready to plan {data.dog.name || 'their'} week?
+              Ready to plan your week — together?
             </h1>
             <p className="mx-auto mt-2 max-w-sm font-sans text-ink-500">
-              We've got everything we need — {data.owner.householdSize} at your table, and{' '}
-              {data.dog.name || 'your dog'} eating alongside you, safely.
+              We've got everything we need — dinner for {data.owner.householdSize} at
+              your table, with {data.dog.name || 'your dog'} eating safely alongside you.
             </p>
             <div className="mx-auto mt-8 max-w-sm rounded-2xl border border-ink-600/10 bg-cream-100 p-5 text-left font-sans text-sm text-ink-500">
               <div className="flex justify-between py-1"><span>Household</span><span className="font-semibold text-ink-700">{data.owner.householdSize} people</span></div>

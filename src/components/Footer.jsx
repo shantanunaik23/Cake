@@ -8,8 +8,8 @@ export default function Footer() {
           <div className="max-w-sm">
             <Logo />
             <p className="mt-3 font-sans text-sm leading-relaxed text-ink-500">
-              One cooking session, two perfect meals. Personalized weekly plans for
-              you and your dog, built around ingredients you already share.
+              A personalized weekly meal plan for you, with a dog-safe portion
+              built in — so dinner is something you and your dog actually share.
             </p>
           </div>
           <div className="flex gap-16">

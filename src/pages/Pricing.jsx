@@ -6,7 +6,7 @@ const tiers = [
     name: 'Free',
     price: '$0',
     period: 'forever',
-    tagline: 'See what a two-bowl week feels like.',
+    tagline: 'Try a week of dinners you can share.',
     cta: 'Start free',
     features: [
       '3 sample paired recipes',
@@ -67,8 +67,8 @@ export default function Pricing() {
     <div className="mx-auto max-w-6xl px-5 py-16">
       <div className="mx-auto max-w-xl text-center">
         <span className="font-sans text-sm font-bold uppercase tracking-wider text-rust-500">Membership</span>
-        <h1 className="mt-3 font-display text-4xl font-semibold text-ink-700 md:text-5xl">Simple pricing for two bowls.</h1>
-        <p className="mt-4 font-sans text-ink-500">Start free. Upgrade when you're ready for a plan built entirely around you and your dog.</p>
+        <h1 className="mt-3 font-display text-4xl font-semibold text-ink-700 md:text-5xl">Simple pricing for sharing dinner.</h1>
+        <p className="mt-4 font-sans text-ink-500">Start free. Upgrade when you're ready for a full weekly plan, built around you first — with your dog eating safely alongside you.</p>
       </div>
 
       <div className="mt-14 grid gap-6 md:grid-cols-3">
@@ -122,7 +122,7 @@ export default function Pricing() {
       </div>
 
       <div className="mx-auto mt-16 max-w-2xl rounded-3xl bg-ink-700 p-10 text-center shadow-lift">
-        <h2 className="font-display text-2xl font-semibold text-cream-50">Two minutes to your first two-bowl plan.</h2>
+        <h2 className="font-display text-2xl font-semibold text-cream-50">Two minutes to your first shared dinner.</h2>
         <Button to="/onboarding" className="mt-6">
           Build my plan <ArrowIcon className="h-5 w-5" />
         </Button>

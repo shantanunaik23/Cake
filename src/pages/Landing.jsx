@@ -5,18 +5,18 @@ import { recipes } from '../data/recipes.js'
 
 const steps = [
   {
-    title: 'Tell us about you both',
-    body: 'Your cooking habits, tastes, and household. Your dog\'s breed, weight, activity level, and any sensitivities.',
+    title: 'Tell us about you first',
+    body: 'Your cooking habits, tastes, and household — then your dog\'s breed, weight, activity level, and any sensitivities.',
     icon: PawIcon,
   },
   {
-    title: 'We build one shared menu',
-    body: 'Every recipe starts from the same base ingredients, then forks: seasoned for you, plain and portioned for them.',
+    title: 'We build your menu, with a fork for them',
+    body: 'Every recipe starts as your dinner — seasoned, real cooking. It only forks off plain and portioned for your dog at the end.',
     icon: HerbIcon,
   },
   {
-    title: 'Cook once, serve two bowls',
-    body: 'One shopping list, one prep session, dinner sorted for the whole household — including the one with four legs.',
+    title: 'Cook once, sit down together',
+    body: 'One shopping list, one prep session — and dinner where you\'re both actually eating the same thing, at the same table.',
     icon: SteamIcon,
   },
 ]
@@ -42,17 +42,18 @@ export default function Landing() {
           <div className="grid items-center gap-12 md:grid-cols-2">
             <div className="animate-floatUp">
               <span className="inline-flex items-center gap-2 rounded-full bg-rust-50 px-4 py-1.5 font-sans text-sm font-semibold text-rust-500">
-                <PawIcon className="h-4 w-4" /> A subscription meal plan for households of two species
+                <PawIcon className="h-4 w-4" /> A real meal plan for you, with a dog-safe portion built in
               </span>
               <h1 className="mt-6 font-display text-5xl font-semibold leading-[1.05] text-ink-700 md:text-6xl">
-                Cook once.
+                Cook your dinner.
                 <br />
-                Feed you <span className="text-rust-500">both.</span>
+                Share it <span className="text-rust-500">with them.</span>
               </h1>
               <p className="mt-6 max-w-md font-sans text-lg leading-relaxed text-ink-500">
-                Two Bowls plans your week around ingredients you already share with your
-                dog — one prep session forks into a seasoned dinner for you and a
-                plain, portioned bowl for them.
+                Two Bowls plans your week around dinners you actually want to
+                cook — then splits off a plain, portioned bowl for your dog before
+                the seasoning goes in, so you both eat at the same table, from the
+                same pan.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 <Button to="/onboarding" size="lg">
@@ -68,7 +69,7 @@ export default function Landing() {
                     <span key={c} className="h-7 w-7 rounded-full border-2 border-cream-50" style={{ backgroundColor: c }} />
                   ))}
                 </div>
-                Loved by 4,200+ households cooking for two species
+                Loved by 4,200+ people sharing dinner with their dog every night
               </div>
             </div>
 
@@ -145,11 +146,13 @@ export default function Landing() {
             <div>
               <span className="font-sans text-sm font-bold uppercase tracking-wider text-mustard-200">This week's menu</span>
               <h2 className="mt-3 font-display text-4xl font-semibold text-cream-50">
-                Real recipes, forked for two bowls.
+                Real dinners, made to share.
               </h2>
               <p className="mt-4 max-w-md font-sans text-base leading-relaxed text-cream-100/85">
-                Every plan comes with a full week of dinners that share a base and
-                split at the exact right moment — before the seasoning goes in.
+                Every plan is a full week of dinners you'd actually cook for
+                yourself — each one splitting off a plain, dog-safe portion at
+                exactly the right moment, so you're never eating something
+                different from your dog.
               </p>
               <Button to="/plan" variant="light" size="lg" className="mt-8">
                 Preview a sample plan <ArrowIcon className="h-5 w-5" />
@@ -210,9 +213,9 @@ export default function Landing() {
           <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-rust-500/30 blur-3xl" />
           <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-forest-500/30 blur-3xl" />
           <div className="relative">
-            <h2 className="font-display text-4xl font-semibold text-cream-50 md:text-5xl">Ready to cook once tonight?</h2>
+            <h2 className="font-display text-4xl font-semibold text-cream-50 md:text-5xl">Ready to share dinner tonight?</h2>
             <p className="mx-auto mt-4 max-w-md font-sans text-base text-cream-100/80">
-              Takes about two minutes. Comes back with a full week of two-bowl dinners.
+              Takes about two minutes. Comes back with a full week of dinners built for you, safe for your dog.
             </p>
             <Button to="/onboarding" size="lg" className="mt-8">
               Build my plan <ArrowIcon className="h-5 w-5" />

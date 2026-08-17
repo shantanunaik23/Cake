@@ -8,7 +8,7 @@
 4. **Panpal** — "Pan" (the cooking vessel) + "pal" (the dog). Cute wordplay, good mascot potential (a little pan character), but risks reading as a kids'-brand name rather than a subscription service.
 5. **Sniff & Sear** — Pairs dog behavior (sniff) with a cooking technique (sear). High personality and great for social/marketing copy, but two verbs is a mouthful for a wordmark and less clean at small sizes (app icon, favicon).
 
-**Decision: Two Bowls.** It's the clearest expression of the "cook once, feed you both" mechanic, it's short enough to work as a wordmark and a URL, and it has room to grow a visual identity (the bowl motif shows up everywhere: the logo, loading states, the portion-split visualization).
+**Decision: Two Bowls.** It's the clearest expression of the "cook your dinner, share it with them" idea, it's short enough to work as a wordmark and a URL, and it has room to grow a visual identity (the bowl motif shows up everywhere: the logo, loading states, the portion-split visualization).
 
 ## Visual system
 
@@ -24,6 +24,22 @@
 **Type pairing:**
 - **Fraunces** (display serif, high optical size/wonk) for headlines — warm, a little wonky/handmade, avoids the generic "Poppins/Nunito rounded SaaS" look while still feeling premium.
 - **Inter** for body copy, UI labels, and forms — clean and highly legible, keeps the product feeling trustworthy and easy to use underneath the personality of the headlines.
+
+## Copywriting principles
+
+Two rules govern every piece of copy on the site, front to back:
+
+1. **The owner is the customer; the dog is the reason they'll love it.** They're
+   signing up and paying, not the dog — so copy always names the human first
+   ("your dinner," "your plate," "your week"), form steps ask about the owner
+   before the dog, and headlines lead with the human's benefit. The dog's
+   safety and portioning are the emotional payoff, not the subject of the
+   sentence.
+2. **Sell togetherness, not logistics.** "One prep session" is a feature; "you
+   both eat the same dinner, at the same table" is the benefit that actually
+   sells a subscription. Copy leans on words like *share*, *together*, and
+   *alongside* rather than framing the product as feeding two separate
+   creatures more efficiently.
 
 **Motifs used consistently across the app:**
 - The **paired-bowl split** (human plate / dog bowl side by side, or a single dish visually forked in two) is the recurring "aha" visual — it appears on the landing hero, the plan view, and recipe detail pages.
