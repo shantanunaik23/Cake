@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #F6EEE0;
+  color: #332D27;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: #DFA52C;
+  color: #241F1B;
+}
+
+.bg-grain {
+  background-image: radial-gradient(rgba(51, 45, 39, 0.055) 1px, transparent 1px);
+  background-size: 3px 3px;
+}
