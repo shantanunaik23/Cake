@@ -17,8 +17,9 @@ export function blueScore(data) {
  * and `factor`, then re-arms once the signal falls back down.
  */
 export class OnsetDetector {
-  constructor({ minRise = 0.002, factor = 3, refractoryMs = 400, history = 45 } = {}) {
-    Object.assign(this, { minRise, factor, refractoryMs, history });
+  constructor({ minRise = 0.002, factor = 3, refractoryMs = 400, history = 45, minDurationMs = 0 } = {}) {
+    Object.assign(this, { minRise, factor, refractoryMs, history, minDurationMs });
+    this.pending = null;
     this.quiet = [];
     this.armed = true;
     this.lastOnset = -Infinity;
@@ -35,11 +36,19 @@ export class OnsetDetector {
     const base = this.baseline();
     const high = value > base * this.factor + this.minRise;
     if (high && this.armed && t - this.lastOnset > this.refractoryMs && this.quiet.length >= 10) {
-      this.armed = false;
-      this.lastOnset = t;
-      return t;
+      // Must stay high for minDurationMs (rejects taps/bumps); report when it began.
+      if (this.pending === null) this.pending = t;
+      if (t - this.pending >= this.minDurationMs) {
+        const start = this.pending;
+        this.pending = null;
+        this.armed = false;
+        this.lastOnset = start;
+        return start;
+      }
+      return null;
     }
     if (!high) {
+      this.pending = null;
       this.armed = true;
       this.quiet.push(value);
       if (this.quiet.length > this.history) this.quiet.shift();

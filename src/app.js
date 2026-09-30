@@ -25,7 +25,7 @@ registerProcessor('rms', Rms);`;
 function resetDetectors() {
   flashes = []; tones = [];
   videoDet = new OnsetDetector({ minRise: 0.002, factor: 3, refractoryMs: 400, history: 45 });
-  audioDet = new OnsetDetector({ minRise: 0.004, factor: 4, refractoryMs: 400, history: 200 });
+  audioDet = new OnsetDetector({ minRise: 0.0005, factor: 3, refractoryMs: 400, history: 400, minDurationMs: 30 });
   render();
 }
 

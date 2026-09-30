@@ -49,3 +49,15 @@ test('pairEvents skips unmatched events; early audio is negative', () => {
 test('acousticDelayMs: 3.43m is 10ms', () => {
   assert.ok(Math.abs(acousticDelayMs(3.43) - 10) < 1e-9);
 });
+
+test('minDurationMs rejects a short tap but keeps a sustained tone, reporting its start', () => {
+  const mk = (pulseLen) => {
+    const samples = [];
+    for (let t = 0; t < 2000; t += 3) samples.push([t, t >= 1000 && t < 1000 + pulseLen ? 0.05 : 0.0005]);
+    return run(new OnsetDetector({ minRise: 0.0005, minDurationMs: 30 }), samples);
+  };
+  assert.equal(mk(12).length, 0);
+  const tone = mk(150);
+  assert.equal(tone.length, 1);
+  assert.ok(tone[0] >= 1000 && tone[0] < 1004);
+});
