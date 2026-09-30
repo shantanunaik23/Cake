@@ -17,3 +17,7 @@ Camera/mic access needs HTTPS or `localhost`. To use a phone, serve over HTTPS (
 - Audio is timestamped in the audio worklet (~3 ms blocks), corrected by `baseLatency`. Real mic/camera pipeline latency differs per phone and isn't measurable here, so treat results as roughly ±30 ms.
 - Enter your distance to the TV to subtract sound travel time (~3 ms per metre).
 - Detection is by colour (blue) and loudness onset, so keep the room quiet and the screen filling the frame.
+
+## Deploy
+
+Pushing to `main` runs tests and deploys to GitHub Pages (`.github/workflows/pages.yml`). One-time setup: repo **Settings → Pages → Source: GitHub Actions**. The site is then at https://shantanunaik23.github.io/Cake/.
