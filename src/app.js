@@ -29,12 +29,34 @@ function resetDetectors() {
   render();
 }
 
+async function getStream() {
+  const videoC = { facingMode: 'environment', frameRate: { ideal: 60 }, width: { ideal: 1280 } };
+  // Raw audio: processing would smear or delay the onset of the tone.
+  const audioC = { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 };
+  try {
+    return await navigator.mediaDevices.getUserMedia({ video: videoC, audio: audioC });
+  } catch (e) {
+    if (e.name !== 'NotAllowedError') throw e;
+    // Find out which device is blocked so the message can say so.
+    const blocked = [];
+    for (const [name, c] of [['camera', { video: true }], ['microphone', { audio: true }]]) {
+      try { (await navigator.mediaDevices.getUserMedia(c)).getTracks().forEach((t) => t.stop()); }
+      catch { blocked.push(name); }
+    }
+    const inFrame = window.self !== window.top;
+    const err = new Error(
+      (blocked.length ? `${blocked.join(' and ')} blocked. ` : 'Permission was refused. ') +
+      (inFrame ? 'This page is inside a frame; open it directly in your browser. ' :
+        'Tap the lock/site-settings icon in the address bar, set Camera and Microphone to Allow, then reload. ' +
+        'On iPhone also check Settings → Safari → Camera/Microphone.'));
+    err.name = 'NotAllowedError';
+    throw err;
+  }
+}
+
 async function start() {
-  stream = await navigator.mediaDevices.getUserMedia({
-    video: { facingMode: 'environment', frameRate: { ideal: 60 }, width: { ideal: 1280 } },
-    // Raw audio: processing would smear or delay the onset of the tone.
-    audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 },
-  });
+  if (!navigator.mediaDevices?.getUserMedia) throw new Error('Needs HTTPS (or localhost) and a modern browser.');
+  stream = await getStream();
   video.srcObject = stream;
   await video.play();
   $('placeholder').parentElement.classList.add('live');
@@ -107,7 +129,7 @@ function render() {
 $('start').addEventListener('click', () => start().catch((e) => {
   $('verdict').className = 'bad';
   $('verdict').textContent = 'Could not start';
-  $('detail').textContent = `${e.name}: ${e.message}. Camera needs HTTPS (or localhost) and permission.`;
+  $('detail').textContent = e.name === 'NotAllowedError' ? e.message : `${e.name}: ${e.message}`;
 }));
 $('reset').addEventListener('click', () => { $('log').textContent = ''; resetDetectors(); });
 $('distance').addEventListener('input', render);
