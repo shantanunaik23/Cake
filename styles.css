@@ -23,3 +23,7 @@ button:disabled { opacity:.4; }
 #detail { color:var(--mute); font-size:.9rem; margin-top:4px; }
 details { color:var(--mute); font-size:.85rem; }
 #log { padding-left:20px; font-variant-numeric:tabular-nums; }
+.settings { border:1px solid #2a3240; border-radius:12px; margin:12px 0; padding:8px 16px 12px; }
+.settings legend { color:var(--mute); font-size:.85rem; padding:0 6px; }
+.settings label { display:grid; grid-template-columns:1fr auto; gap:0 8px; margin-top:8px; color:var(--mute); font-size:.9rem; }
+.settings input { grid-column:1 / -1; width:100%; }

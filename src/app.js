@@ -1,4 +1,4 @@
-import { blueScore, OnsetDetector, pairEvents, summarize, acousticDelayMs } from './detect.js';
+import { blueScore, OnsetDetector, pairEvents, summarize, acousticDelayMs, sensitivityToMinRise } from './detect.js';
 
 const $ = (id) => document.getElementById(id);
 const video = $('video'), probe = $('probe'), ctx2d = probe.getContext('2d', { willReadFrequently: true });
@@ -25,7 +25,8 @@ registerProcessor('rms', Rms);`;
 function resetDetectors() {
   flashes = []; tones = [];
   videoDet = new OnsetDetector({ minRise: 0.002, factor: 3, refractoryMs: 400, history: 45 });
-  audioDet = new OnsetDetector({ minRise: 0.0005, factor: 3, refractoryMs: 400, history: 400, minDurationMs: 30 });
+  audioDet = new OnsetDetector({ factor: 3, refractoryMs: 400, history: 400 });
+  applySettings();
   render();
 }
 
@@ -147,3 +148,25 @@ $('start').addEventListener('click', () => start().catch((e) => {
 }));
 $('reset').addEventListener('click', () => { $('log').textContent = ''; resetDetectors(); });
 $('distance').addEventListener('input', render);
+
+// Tone detection settings, remembered between visits when storage is available.
+function loadSettings() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('avsync.settings') || '{}');
+    if (saved.sens != null) $('sens').value = saved.sens;
+    if (saved.len != null) $('len').value = saved.len;
+  } catch { /* storage unavailable: use defaults */ }
+}
+
+function applySettings() {
+  const sens = +$('sens').value, len = +$('len').value;
+  const minRise = sensitivityToMinRise(sens);
+  $('sensout').textContent = `${sens} (trigger > ${(20 * Math.log10(minRise)).toFixed(0)} dB)`;
+  $('lenout').textContent = `${len} ms`;
+  if (audioDet) { audioDet.minRise = minRise; audioDet.minDurationMs = len; }
+  try { localStorage.setItem('avsync.settings', JSON.stringify({ sens, len })); } catch { /* ignore */ }
+}
+$('sens').addEventListener('input', applySettings);
+$('len').addEventListener('input', applySettings);
+loadSettings();
+applySettings();

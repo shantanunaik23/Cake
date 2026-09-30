@@ -92,3 +92,8 @@ export const SPEED_OF_SOUND_M_PER_S = 343;
 export function acousticDelayMs(distanceM) {
   return (distanceM / SPEED_OF_SOUND_M_PER_S) * 1000;
 }
+
+/** Map a 0-100 sensitivity slider to the minimum audio level rise (RMS): -40 dB .. -80 dB. */
+export function sensitivityToMinRise(v) {
+  return Math.pow(10, (-40 - 0.4 * v) / 20);
+}
