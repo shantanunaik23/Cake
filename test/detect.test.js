@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { blueScore, OnsetDetector, pairEvents, summarize, acousticDelayMs, sensitivityToMinRise } from '../src/detect.js';
+import { blueScore, OnsetDetector, pairEvents, summarize, acousticDelayMs, sensitivityToMinRise, matchEvents } from '../src/detect.js';
 
 test('blueScore sees blue, ignores grey/white/red', () => {
   const px = (r, g, b) => [r, g, b, 255];
@@ -64,6 +64,10 @@ test('minDurationMs rejects a short tap but keeps a sustained tone, reporting it
 
 test('sensitivityToMinRise: more sensitive means a lower threshold', () => {
   assert.ok(Math.abs(sensitivityToMinRise(0) - 0.01) < 1e-9);
-  assert.ok(Math.abs(sensitivityToMinRise(100) - 0.0001) < 1e-9);
+  assert.ok(Math.abs(sensitivityToMinRise(100) - 0.00001) < 1e-12);
   assert.ok(sensitivityToMinRise(80) < sensitivityToMinRise(20));
+});
+
+test('matchEvents returns the flash, tone and offset of each pair', () => {
+  assert.deepEqual(matchEvents([1000], [1075]), [{ flash: 1000, tone: 1075, offset: 75 }]);
 });

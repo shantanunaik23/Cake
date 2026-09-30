@@ -62,7 +62,12 @@ export class OnsetDetector {
  * Offset = tone - flash, so positive means audio arrives AFTER video.
  */
 export function pairEvents(flashes, tones, windowMs = 500) {
-  const offsets = [];
+  return matchEvents(flashes, tones, windowMs).map((m) => m.offset);
+}
+
+/** Like pairEvents, but returns {flash, tone, offset} for each match. */
+export function matchEvents(flashes, tones, windowMs = 500) {
+  const matches = [];
   const used = new Set();
   for (const f of flashes) {
     let best = -1;
@@ -73,10 +78,10 @@ export function pairEvents(flashes, tones, windowMs = 500) {
     }
     if (best >= 0) {
       used.add(best);
-      offsets.push(tones[best] - f);
+      matches.push({ flash: f, tone: tones[best], offset: tones[best] - f });
     }
   }
-  return offsets;
+  return matches;
 }
 
 export function summarize(offsets) {
@@ -93,7 +98,7 @@ export function acousticDelayMs(distanceM) {
   return (distanceM / SPEED_OF_SOUND_M_PER_S) * 1000;
 }
 
-/** Map a 0-100 sensitivity slider to the minimum audio level rise (RMS): -40 dB .. -80 dB. */
+/** Map a 0-100 sensitivity slider to the minimum audio level rise (RMS): -40 dB .. -100 dB. */
 export function sensitivityToMinRise(v) {
-  return Math.pow(10, (-40 - 0.4 * v) / 20);
+  return Math.pow(10, (-40 - 0.6 * v) / 20);
 }

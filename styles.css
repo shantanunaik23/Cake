@@ -27,3 +27,7 @@ details { color:var(--mute); font-size:.85rem; }
 .settings legend { color:var(--mute); font-size:.85rem; padding:0 6px; }
 .settings label { display:grid; grid-template-columns:1fr auto; gap:0 8px; margin-top:8px; color:var(--mute); font-size:.9rem; }
 .settings input { grid-column:1 / -1; width:100%; }
+#log { list-style:none; padding-left:0; }
+#log li { padding:2px 0; }
+#log li.pair { color:var(--fg); font-weight:600; }
+#log li.warn { color:var(--warn); }

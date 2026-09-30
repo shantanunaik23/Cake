@@ -1,10 +1,10 @@
-import { blueScore, OnsetDetector, pairEvents, summarize, acousticDelayMs, sensitivityToMinRise } from './detect.js';
+import { blueScore, OnsetDetector, matchEvents, summarize, acousticDelayMs, sensitivityToMinRise } from './detect.js';
 
 const $ = (id) => document.getElementById(id);
 const video = $('video'), probe = $('probe'), ctx2d = probe.getContext('2d', { willReadFrequently: true });
 
 // Timestamps of detected events, all in the performance.now() clock (ms).
-let flashes = [], tones = [];
+let flashes = [], tones = [], t0 = 0, loggedFlashes = new Set(), loggedTones = new Set(), loggedPairs = new Set();
 let videoDet, audioDet, stream, audioCtx, running = false;
 
 // Runs on the audio thread: one RMS value per 128-sample block (~2.7 ms).
@@ -23,7 +23,8 @@ class Rms extends AudioWorkletProcessor {
 registerProcessor('rms', Rms);`;
 
 function resetDetectors() {
-  flashes = []; tones = [];
+  flashes = []; tones = []; loggedFlashes = new Set(); loggedTones = new Set(); loggedPairs = new Set();
+  t0 = performance.now();
   videoDet = new OnsetDetector({ minRise: 0.002, factor: 3, refractoryMs: 400, history: 45 });
   audioDet = new OnsetDetector({ factor: 3, refractoryMs: 400, history: 400 });
   applySettings();
@@ -89,15 +90,15 @@ function onAudio({ data: { t, rms } }) {
   const now = performance.now();
   clockOffset = Math.min(clockOffset, now - t * 1000);
   const perf = t * 1000 + clockOffset - (audioCtx.baseLatency || 0) * 1000;
-  // Log-scale meter: -60 dB..0 dB, so quiet phones still show movement.
+  // Log-scale meter: -100 dB..-20 dB, so quiet phones still show movement.
   const db = 20 * Math.log10(rms + 1e-6);
-  $('ameter').value = Math.max(0, Math.min(1, (db + 60) / 60));
+  $('ameter').value = Math.max(0, Math.min(1, (db + 100) / 80));
   if (now - lastStatus > 500) {
     lastStatus = now;
     $('audiostat').textContent = `audio: ${audioCtx.state}, ${Math.round(audioCtx.sampleRate)} Hz, ${db.toFixed(0)} dB`;
   }
   const onset = audioDet.update(perf, rms);
-  if (onset !== null) { tones.push(onset); log('tone', onset); render(); }
+  if (onset !== null) { tones.push(onset); log(`🔊 beep at ${rel(onset)}`); render(); }
 }
 
 function watchFrames() {
@@ -109,23 +110,59 @@ function watchFrames() {
     // captureTime is when the camera sensor grabbed the frame, when available.
     const t = meta.captureTime ?? now;
     const onset = videoDet.update(t, score);
-    if (onset !== null) { flashes.push(onset); log('flash', onset); render(); }
+    if (onset !== null) { flashes.push(onset); log(`🔵 flash at ${rel(onset)}`); render(); }
     video.requestVideoFrameCallback(onFrame);
   };
   video.requestVideoFrameCallback(onFrame);
 }
 
-function log(kind, t) {
+// Seconds since the current run started, so log times are readable.
+const rel = (t) => `${((t - t0) / 1000).toFixed(3)} s`;
+
+function log(text, cls = '') {
   const li = document.createElement('li');
-  li.textContent = `${kind} @ ${t.toFixed(1)} ms`;
+  li.textContent = text;
+  if (cls) li.className = cls;
   $('log').prepend(li);
 }
+
+const WINDOW_MS = 500;
+
+// Log any pair that has just formed, and any event that never found a partner.
+function logPairs(acoustic) {
+  const adj = tones.map((t) => t - acoustic);
+  matchEvents(flashes, adj, WINDOW_MS).forEach(({ flash, offset }, i) => {
+    if (loggedPairs.has(flash)) return;
+    loggedPairs.add(flash);
+    const ms = Math.round(offset);
+    const what = Math.abs(ms) <= 20 ? 'in sync' : ms > 0 ? 'audio late' : 'audio early';
+    log(`⏱ pair ${loggedPairs.size}: ${ms > 0 ? '+' : ''}${ms} ms (${what})`, 'pair');
+  });
+  const now = performance.now();
+  const paired = matchEvents(flashes, adj, WINDOW_MS);
+  for (const f of flashes) {
+    if (now - f > WINDOW_MS + 200 && !loggedFlashes.has(f) && !paired.some((m) => m.flash === f)) {
+      loggedFlashes.add(f);
+      log(`⚠ flash at ${rel(f)} had no beep within ${WINDOW_MS} ms`, 'warn');
+    }
+  }
+  for (const [i, t] of adj.entries()) {
+    const raw = tones[i];
+    if (now - raw > WINDOW_MS + 200 && !loggedTones.has(raw) && !paired.some((m) => m.tone === t)) {
+      loggedTones.add(raw);
+      log(`⚠ beep at ${rel(raw)} had no flash within ${WINDOW_MS} ms`, 'warn');
+    }
+  }
+}
+
+setInterval(() => { if (running) logPairs(acousticDelayMs(parseFloat($('distance').value) || 0)); }, 400);
 
 function render() {
   const verdict = $('verdict'), detail = $('detail');
   verdict.className = '';
   const acoustic = acousticDelayMs(parseFloat($('distance').value) || 0);
-  const offsets = pairEvents(flashes, tones.map((t) => t - acoustic));
+  const offsets = matchEvents(flashes, tones.map((t) => t - acoustic), WINDOW_MS).map((m) => m.offset);
+  if (running) logPairs(acoustic);
   const s = summarize(offsets);
   if (!running) { verdict.textContent = 'Waiting to start…'; detail.textContent = ''; return; }
   if (!s || s.count < 3) {
@@ -152,7 +189,7 @@ $('distance').addEventListener('input', render);
 // Tone detection settings, remembered between visits when storage is available.
 function loadSettings() {
   try {
-    const saved = JSON.parse(localStorage.getItem('avsync.settings') || '{}');
+    const saved = JSON.parse(localStorage.getItem('avsync.settings.v2') || '{}');
     if (saved.sens != null) $('sens').value = saved.sens;
     if (saved.len != null) $('len').value = saved.len;
   } catch { /* storage unavailable: use defaults */ }
@@ -164,7 +201,7 @@ function applySettings() {
   $('sensout').textContent = `${sens} (trigger > ${(20 * Math.log10(minRise)).toFixed(0)} dB)`;
   $('lenout').textContent = `${len} ms`;
   if (audioDet) { audioDet.minRise = minRise; audioDet.minDurationMs = len; }
-  try { localStorage.setItem('avsync.settings', JSON.stringify({ sens, len })); } catch { /* ignore */ }
+  try { localStorage.setItem('avsync.settings.v2', JSON.stringify({ sens, len })); } catch { /* ignore */ }
 }
 $('sens').addEventListener('input', applySettings);
 $('len').addEventListener('input', applySettings);
