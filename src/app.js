@@ -25,7 +25,7 @@ registerProcessor('rms', Rms);`;
 function resetDetectors() {
   flashes = []; tones = [];
   videoDet = new OnsetDetector({ minRise: 0.002, factor: 3, refractoryMs: 400, history: 45 });
-  audioDet = new OnsetDetector({ minRise: 0.02, factor: 4, refractoryMs: 400, history: 200 });
+  audioDet = new OnsetDetector({ minRise: 0.004, factor: 4, refractoryMs: 400, history: 200 });
   render();
 }
 
@@ -56,12 +56,14 @@ async function getStream() {
 
 async function start() {
   if (!navigator.mediaDevices?.getUserMedia) throw new Error('Needs HTTPS (or localhost) and a modern browser.');
+  // Must be created inside the tap gesture or iOS leaves it suspended.
+  audioCtx = new AudioContext({ latencyHint: 'interactive' });
+  audioCtx.resume();
   stream = await getStream();
   video.srcObject = stream;
   await video.play();
   $('placeholder').parentElement.classList.add('live');
 
-  audioCtx = new AudioContext({ latencyHint: 'interactive' });
   const url = URL.createObjectURL(new Blob([WORKLET], { type: 'text/javascript' }));
   await audioCtx.audioWorklet.addModule(url);
   const node = new AudioWorkletNode(audioCtx, 'rms');
@@ -69,6 +71,7 @@ async function start() {
   node.port.onmessage = onAudio;
   await audioCtx.resume();
 
+  clockOffset = Infinity;
   resetDetectors();
   running = true;
   $('start').disabled = true;
@@ -76,11 +79,22 @@ async function start() {
   watchFrames();
 }
 
+// getOutputTimestamp() is unreliable on Safari, so learn the clock offset from
+// worklet messages instead. The smallest (now - audioTime) seen is the one with
+// the least message-delivery delay.
+let clockOffset = Infinity, lastStatus = 0;
+
 function onAudio({ data: { t, rms } }) {
-  // Map audio-context time onto the performance clock, less input-path latency.
-  const ts = audioCtx.getOutputTimestamp();
-  const perf = ts.performanceTime + (t - ts.contextTime) * 1000 - (audioCtx.baseLatency || 0) * 1000;
-  $('ameter').value = Math.min(1, rms * 4);
+  const now = performance.now();
+  clockOffset = Math.min(clockOffset, now - t * 1000);
+  const perf = t * 1000 + clockOffset - (audioCtx.baseLatency || 0) * 1000;
+  // Log-scale meter: -60 dB..0 dB, so quiet phones still show movement.
+  const db = 20 * Math.log10(rms + 1e-6);
+  $('ameter').value = Math.max(0, Math.min(1, (db + 60) / 60));
+  if (now - lastStatus > 500) {
+    lastStatus = now;
+    $('audiostat').textContent = `audio: ${audioCtx.state}, ${Math.round(audioCtx.sampleRate)} Hz, ${db.toFixed(0)} dB`;
+  }
   const onset = audioDet.update(perf, rms);
   if (onset !== null) { tones.push(onset); log('tone', onset); render(); }
 }
